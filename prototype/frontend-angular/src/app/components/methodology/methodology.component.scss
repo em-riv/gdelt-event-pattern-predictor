@@ -1,0 +1,332 @@
+.methodology-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.methodology-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  .back-button {
+    color: white;
+    margin-right: 16px;
+  }
+
+  .header-content {
+    h1 {
+      margin: 0 0 5px 0;
+      font-size: 2rem;
+      font-weight: 300;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+  }
+}
+
+.section-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  mat-card-header {
+    margin-bottom: 16px;
+
+    mat-icon[mat-card-avatar] {
+      background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+      color: white;
+      padding: 8px;
+      border-radius: 50%;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  mat-card-content {
+    p {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.overview-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+}
+
+// Data Sources
+.data-sources-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.data-source-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+
+  .source-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #1976d2;
+    margin-right: 16px;
+  }
+
+  .source-content {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    p {
+      margin: 0 0 8px 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .source-metric {
+      display: inline-block;
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// Feature List
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    color: #555;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #4caf50;
+      margin-right: 12px;
+    }
+  }
+}
+
+// Model Card
+.model-card {
+  mat-divider {
+    margin: 24px 0;
+  }
+
+  h4 {
+    margin: 0 0 16px 0;
+    color: #333;
+  }
+}
+
+.model-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.model-info-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 8px;
+
+  .label {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .value {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+  border-radius: 8px;
+  color: white;
+
+  .metric-value {
+    font-size: 2rem;
+    font-weight: 300;
+  }
+
+  .metric-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+  }
+}
+
+// Risk Levels
+.risk-levels-list {
+  display: grid;
+  gap: 16px;
+}
+
+.risk-level-item {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  border-left: 4px solid;
+
+  .risk-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .risk-badge {
+    padding: 4px 12px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .risk-range {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .risk-description {
+    margin: 0;
+    color: #555;
+    font-size: 0.9rem;
+  }
+}
+
+// Limitations
+.limitations-card {
+  border-left: 4px solid #ff9800;
+}
+
+.limitations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #ff9800;
+      margin-right: 12px;
+      margin-top: 2px;
+    }
+  }
+}
+
+.disclaimer {
+  display: flex;
+  padding: 16px;
+  background: #fff3e0;
+  border-radius: 8px;
+  border: 1px solid #ffcc80;
+
+  mat-icon {
+    color: #f57c00;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 40px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .methodology-header {
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

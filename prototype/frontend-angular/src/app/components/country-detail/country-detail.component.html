@@ -1,0 +1,213 @@
+<div class="country-detail-container">
+  <!-- Header -->
+  <header class="country-header">
+    <button mat-icon-button routerLink="/" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>{{ countryName }}</h1>
+      <p class="subtitle">Detailed Conflict Analysis</p>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading country details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button routerLink="/">Back to Dashboard</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error && detail" class="content">
+
+    <!-- Current Prediction Card -->
+    <mat-card class="prediction-card">
+      <mat-card-header>
+        <mat-card-title>Current Prediction</mat-card-title>
+        <mat-card-subtitle>{{ detail.current_prediction.date }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="prediction-grid">
+          <div class="prediction-stat">
+            <div class="stat-label">Conflict Probability</div>
+            <div class="stat-value">
+              {{ formatProbability(detail.current_prediction.conflict_probability) }}
+            </div>
+          </div>
+
+          <div class="prediction-stat">
+            <div class="stat-label">Risk Level</div>
+            <div class="stat-value">
+              <mat-chip [style.background-color]="getRiskLevelColor(detail.current_prediction.risk_level)">
+                {{ detail.current_prediction.risk_level }}
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="prediction-stat">
+            <div class="stat-label">Model Confidence</div>
+            <div class="stat-value">
+              {{ formatConfidence(detail.current_prediction.confidence) }}
+            </div>
+          </div>
+
+          <div class="prediction-stat" *ngIf="detail.historical_accuracy">
+            <div class="stat-label">Historical Accuracy</div>
+            <div class="stat-value">
+              {{ formatProbability(detail.historical_accuracy) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Gauge Chart -->
+        <div id="gauge-chart" class="plotly-chart"></div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- 7-Day Trend Card -->
+    <mat-card class="trend-card">
+      <mat-card-header>
+        <mat-card-title>7-Day Trend Analysis</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div id="trend-chart" class="plotly-chart"></div>
+
+        <div class="trend-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #4caf50;"></span>
+            <span>Low Risk (0-40%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #ffeb3b;"></span>
+            <span>Medium Risk (40-60%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #ff9800;"></span>
+            <span>High Risk (60-80%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #f44336;"></span>
+            <span>Critical Risk (80-100%)</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Feature Importance Card -->
+    <mat-card class="features-card">
+      <mat-card-header>
+        <mat-card-title>Key Contributing Factors</mat-card-title>
+        <mat-card-subtitle>Features driving the prediction</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div id="feature-importance-chart" class="plotly-chart"></div>
+
+        <mat-list class="feature-details">
+          <h3 mat-subheader>Feature Details</h3>
+          <mat-list-item *ngFor="let feature of detail.top_features">
+            <div matListItemTitle>{{ feature.feature_name }}</div>
+            <div matListItemLine>
+              Contribution: {{ feature.contribution.toFixed(3) }} | Value: {{ feature.value.toFixed(2) }}
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Multi-Horizon Predictions Card -->
+    <mat-card class="horizon-card" *ngIf="allHorizonPredictions.length > 0">
+      <mat-card-header>
+        <mat-card-title>Multi-Horizon Forecast</mat-card-title>
+        <mat-card-subtitle>Predictions for different time horizons</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div id="horizon-chart" class="plotly-chart"></div>
+        
+        <div class="horizon-details">
+          <div *ngFor="let pred of allHorizonPredictions" class="horizon-item">
+            <div class="horizon-label">{{ pred.horizon_days }}-Day Forecast</div>
+            <div class="horizon-stats">
+              <span class="probability">{{ formatProbability(pred.conflict_probability) }}</span>
+              <mat-chip [style.background-color]="getRiskLevelColor(pred.risk_level)" class="risk-chip">
+                {{ pred.risk_level }}
+              </mat-chip>
+              <span class="target-date">Target: {{ pred.date }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Recent News Card -->
+    <mat-card class="news-card" *ngIf="recentNews.length > 0">
+      <mat-card-header>
+        <mat-card-title>📰 Recent Events for {{ countryName }}</mat-card-title>
+        <mat-card-subtitle>Latest GDELT events related to this country</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="news-list">
+          <div *ngFor="let news of recentNews" class="news-item">
+            <div class="news-header">
+              <h4>{{ news.title }}</h4>
+              <div class="news-meta">
+                <span class="date">{{ news.date }}</span>
+                <span class="sentiment" 
+                      [class.negative]="news.goldstein_scale !== undefined && news.goldstein_scale < 0" 
+                      [class.positive]="news.goldstein_scale !== undefined && news.goldstein_scale > 0">
+                  Goldstein: {{ news.goldstein_scale !== undefined ? news.goldstein_scale.toFixed(1) : 'N/A' }}
+                </span>
+              </div>
+            </div>
+            <p class="news-summary">{{ news.summary }}</p>
+            <div class="news-footer">
+              <a *ngIf="news.url" [href]="news.url" target="_blank" class="news-link">
+                <mat-icon>open_in_new</mat-icon> View Source
+              </a>
+              <span class="mentions" *ngIf="news.num_mentions">{{ news.num_mentions }} mentions</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Info Cards Grid -->
+    <div class="info-cards-grid">
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>info</mat-icon>
+          <mat-card-title>About This Prediction</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            This prediction is generated using a GRU Bidirectional Neural Network 
+            trained on 98M+ GDELT events spanning 2015-2025. The model analyzes 62 features
+            including event counts, sentiment (Goldstein scale), and categorical distributions 
+            to predict conflict risk across multiple time horizons (7, 14, and 30 days).
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <mat-icon mat-card-avatar>warning</mat-icon>
+        <mat-card-header>
+          <mat-card-title>Risk Interpretation</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul>
+            <li><strong>LOW (0-40%):</strong> Minimal conflict activity expected</li>
+            <li><strong>MEDIUM (40-60%):</strong> Moderate risk of conflict events</li>
+            <li><strong>HIGH (60-80%):</strong> Elevated risk, monitor closely</li>
+            <li><strong>CRITICAL (80-100%):</strong> Very high likelihood of conflict</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,18 @@
+{
+  "timestamp": "20251215_152119",
+  "model_type": "Bidirectional GRU",
+  "sequence_length": 7,
+  "target": "IsHighConflict_mean > 0.15 (NEXT DAY)",
+  "metrics": {
+    "roc_auc": 0.7417288325730744,
+    "f1_score": 0.5057500638895988,
+    "precision": 0.41306616572740557,
+    "recall": 0.6520593080724877
+  },
+  "architecture": {
+    "input_size": 62,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "bidirectional": true
+  }
+}

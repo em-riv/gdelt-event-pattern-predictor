@@ -1,0 +1,56 @@
+{
+  "timestamp": "20251215_140928",
+  "model_type": "XGBoost Forecasting (1-day ahead)",
+  "target": "IsHighConflict_mean > 0.15 (NEXT DAY)",
+  "metrics": {
+    "roc_auc": 0.7805691152095414,
+    "f1_score": 0.5473396998635743,
+    "precision": 0.571835803876853,
+    "recall": 0.5248560962846677
+  },
+  "features_excluded": [
+    "IsHighConflict_mean - prevents leakage"
+  ],
+  "top_features": [
+    {
+      "feature": "AvgTone_mean_7day_avg",
+      "importance": 0.10138099640607834
+    },
+    {
+      "feature": "GoldsteinScale_max",
+      "importance": 0.07275190204381943
+    },
+    {
+      "feature": "IsHighConflict_mean_7day_avg",
+      "importance": 0.06936629116535187
+    },
+    {
+      "feature": "UniqueActor1",
+      "importance": 0.06367580592632294
+    },
+    {
+      "feature": "NumSources_std",
+      "importance": 0.05228923261165619
+    },
+    {
+      "feature": "NumSources_max",
+      "importance": 0.04975973442196846
+    },
+    {
+      "feature": "NumMentions_max",
+      "importance": 0.03207194805145264
+    },
+    {
+      "feature": "IntensityScore_min",
+      "importance": 0.031101102009415627
+    },
+    {
+      "feature": "IsHighConflict_mean_7day_std",
+      "importance": 0.028170257806777954
+    },
+    {
+      "feature": "GoldsteinScale_mean_7day_avg",
+      "importance": 0.02461249940097332
+    }
+  ]
+}

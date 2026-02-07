@@ -1,0 +1,180 @@
+<div class="methodology-container">
+  <!-- Header -->
+  <header class="methodology-header">
+    <button mat-icon-button routerLink="/" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>Methodology</h1>
+      <p class="subtitle">How we predict global conflict risk</p>
+    </div>
+  </header>
+
+  <!-- Overview Section -->
+  <mat-card class="section-card overview-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>info</mat-icon>
+      <mat-card-title>Overview</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        The GDELT Conflict Predictor uses advanced machine learning techniques to analyze 
+        global news and event data, providing probabilistic forecasts of conflict escalation 
+        across countries worldwide.
+      </p>
+      <p>
+        Our system processes over <strong>98 million events</strong> from the GDELT Project, 
+        extracting meaningful patterns and indicators that historically precede conflict 
+        escalation. The model generates predictions at multiple time horizons (7, 14, and 30 days) 
+        to support both tactical and strategic decision-making.
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Data Sources Section -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>storage</mat-icon>
+      <mat-card-title>Data Sources</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="data-sources-grid">
+        <div *ngFor="let source of dataSources" class="data-source-item">
+          <mat-icon class="source-icon">{{ source.icon }}</mat-icon>
+          <div class="source-content">
+            <h3>{{ source.name }}</h3>
+            <p>{{ source.description }}</p>
+            <span class="source-metric">{{ source.metrics }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Feature Engineering Section -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>engineering</mat-icon>
+      <mat-card-title>Feature Engineering</mat-card-title>
+      <mat-card-subtitle>Key indicators extracted from raw data</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let featureGroup of features">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ featureGroup.category }}</mat-panel-title>
+          </mat-expansion-panel-header>
+          <ul class="feature-list">
+            <li *ngFor="let item of featureGroup.items">
+              <mat-icon>check_circle</mat-icon>
+              {{ item }}
+            </li>
+          </ul>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Model Architecture Section -->
+  <mat-card class="section-card model-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>psychology</mat-icon>
+      <mat-card-title>Model Architecture</mat-card-title>
+      <mat-card-subtitle>{{ modelDetails.name }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="model-info-grid">
+        <div class="model-info-item">
+          <span class="label">Architecture</span>
+          <span class="value">{{ modelDetails.architecture }}</span>
+        </div>
+        <div class="model-info-item">
+          <span class="label">Training Period</span>
+          <span class="value">{{ modelDetails.training }}</span>
+        </div>
+        <div class="model-info-item">
+          <span class="label">Validation</span>
+          <span class="value">{{ modelDetails.validation }}</span>
+        </div>
+        <div class="model-info-item">
+          <span class="label">Forecast Horizons</span>
+          <span class="value">{{ modelDetails.horizons.join(', ') }} days</span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <h4>Performance Metrics</h4>
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <span class="metric-value">{{ (modelDetails.metrics.rocAuc * 100).toFixed(0) }}%</span>
+          <span class="metric-label">ROC-AUC</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">{{ (modelDetails.metrics.f1Score * 100).toFixed(0) }}%</span>
+          <span class="metric-label">F1 Score</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">{{ (modelDetails.metrics.precision * 100).toFixed(0) }}%</span>
+          <span class="metric-label">Precision</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">{{ (modelDetails.metrics.recall * 100).toFixed(0) }}%</span>
+          <span class="metric-label">Recall</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Risk Level Definitions -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>warning</mat-icon>
+      <mat-card-title>Risk Level Definitions</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="risk-levels-list">
+        <div *ngFor="let risk of riskLevels" class="risk-level-item" 
+             [style.border-left-color]="risk.color">
+          <div class="risk-header">
+            <span class="risk-badge" [style.background-color]="risk.color">{{ risk.level }}</span>
+            <span class="risk-range">{{ risk.range }}</span>
+          </div>
+          <p class="risk-description">{{ risk.description }}</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Limitations Section -->
+  <mat-card class="section-card limitations-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>report_problem</mat-icon>
+      <mat-card-title>Limitations & Disclaimers</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul class="limitations-list">
+        <li *ngFor="let limitation of limitations">
+          <mat-icon>info_outline</mat-icon>
+          {{ limitation }}
+        </li>
+      </ul>
+      <div class="disclaimer">
+        <mat-icon>gavel</mat-icon>
+        <p>
+          <strong>Disclaimer:</strong> This tool is intended for research and informational purposes only. 
+          Predictions should not be used as the sole basis for policy decisions or actions. 
+          Always consult multiple sources and expert analysis when assessing conflict risk.
+        </p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Back to Dashboard -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" routerLink="/">
+      <mat-icon>dashboard</mat-icon>
+      Back to Dashboard
+    </button>
+  </div>
+</div>

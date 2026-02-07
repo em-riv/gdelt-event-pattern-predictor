@@ -1,0 +1,134 @@
+{
+  "total_events": 134765753,
+  "field_completeness": {
+    "actor1": {
+      "null_count": 60287602,
+      "completeness_pct": 55.26
+    },
+    "actor2": {
+      "null_count": 79307844,
+      "completeness_pct": 41.15
+    },
+    "actiongeo": {
+      "null_count": 4047217,
+      "completeness_pct": 97.0
+    },
+    "lat": {
+      "null_count": 4108849,
+      "completeness_pct": 96.95
+    },
+    "long": {
+      "null_count": 4088472,
+      "completeness_pct": 96.97
+    },
+    "goldstein": {
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "url": {
+      "null_count": 4,
+      "completeness_pct": 100.0
+    }
+  },
+  "country_coverage": {},
+  "quality_issues": [
+    {
+      "issue": "Events with no country information",
+      "count": 2171680,
+      "percentage": 1.61
+    },
+    {
+      "issue": "Events with no geo coordinates",
+      "count": 4088472,
+      "percentage": 3.03
+    },
+    {
+      "issue": "Events with country but missing coordinates",
+      "count": 61632,
+      "percentage": 0.05
+    }
+  ],
+  "timestamp": "2025-12-08T19:56:35.443823",
+  "top_countries": [
+    {
+      "ActionGeo_CountryCode": "US",
+      "event_count": 46626947
+    },
+    {
+      "ActionGeo_CountryCode": "UK",
+      "event_count": 6208657
+    },
+    {
+      "ActionGeo_CountryCode": "IN",
+      "event_count": 5846257
+    },
+    {
+      "ActionGeo_CountryCode": "IS",
+      "event_count": 4571045
+    },
+    {
+      "ActionGeo_CountryCode": "NI",
+      "event_count": 3602611
+    },
+    {
+      "ActionGeo_CountryCode": "RS",
+      "event_count": 3504696
+    },
+    {
+      "ActionGeo_CountryCode": "AS",
+      "event_count": 3078541
+    },
+    {
+      "ActionGeo_CountryCode": "CA",
+      "event_count": 3076363
+    },
+    {
+      "ActionGeo_CountryCode": "CH",
+      "event_count": 3054302
+    },
+    {
+      "ActionGeo_CountryCode": "PK",
+      "event_count": 2772167
+    },
+    {
+      "ActionGeo_CountryCode": "SY",
+      "event_count": 1942215
+    },
+    {
+      "ActionGeo_CountryCode": "IR",
+      "event_count": 1760931
+    },
+    {
+      "ActionGeo_CountryCode": "FR",
+      "event_count": 1759930
+    },
+    {
+      "ActionGeo_CountryCode": "UP",
+      "event_count": 1720569
+    },
+    {
+      "ActionGeo_CountryCode": "SF",
+      "event_count": 1716860
+    },
+    {
+      "ActionGeo_CountryCode": "TU",
+      "event_count": 1454636
+    },
+    {
+      "ActionGeo_CountryCode": "RP",
+      "event_count": 1395987
+    },
+    {
+      "ActionGeo_CountryCode": "AF",
+      "event_count": 1386225
+    },
+    {
+      "ActionGeo_CountryCode": "GM",
+      "event_count": 1338543
+    },
+    {
+      "ActionGeo_CountryCode": "IZ",
+      "event_count": 1222588
+    }
+  ]
+}

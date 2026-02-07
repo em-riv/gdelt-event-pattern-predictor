@@ -1,0 +1,418 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-main">
+      <h1>GDELT Conflict Predictor</h1>
+      <p class="subtitle">Multi-horizon conflict predictions using 98M+ global events</p>
+    </div>
+    <nav class="header-nav">
+      <a routerLink="/methodology" class="nav-link">
+        <mat-icon>info</mat-icon>
+        Methodology
+      </a>
+    </nav>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading predictions...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadData()">Retry</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="content">
+
+    <!-- Quick Stats Bar -->
+    <div class="quick-stats-bar">
+      <div class="quick-stat critical-stat">
+        <mat-icon>warning</mat-icon>
+        <span class="stat-value">{{ getCriticalCount() }}</span>
+        <span class="stat-label">Critical</span>
+      </div>
+      <div class="quick-stat high-stat">
+        <mat-icon>trending_up</mat-icon>
+        <span class="stat-value">{{ getHighCount() }}</span>
+        <span class="stat-label">High Risk</span>
+      </div>
+      <div class="quick-stat medium-stat">
+        <mat-icon>remove</mat-icon>
+        <span class="stat-value">{{ getMediumCount() }}</span>
+        <span class="stat-label">Medium</span>
+      </div>
+      <div class="quick-stat low-stat">
+        <mat-icon>check_circle</mat-icon>
+        <span class="stat-value">{{ getLowCount() }}</span>
+        <span class="stat-label">Low Risk</span>
+      </div>
+      <div class="quick-stat total-stat">
+        <mat-icon>public</mat-icon>
+        <span class="stat-value">{{ predictions.length }}</span>
+        <span class="stat-label">Countries</span>
+      </div>
+    </div>
+
+    <!-- Global Risk Map -->
+    <mat-card class="heatmap-card">
+      <mat-card-header>
+        <mat-card-title>🌍 Global Conflict Risk Map</mat-card-title>
+        <mat-card-subtitle>{{ selectedHorizon }}-day forecast • {{ getTargetDateDisplay(selectedHorizon) }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Map View Toggle -->
+        <div class="map-toggle">
+          <button mat-stroked-button 
+                  [color]="mapViewMode === 'choropleth' ? 'primary' : undefined"
+                  (click)="setMapView('choropleth')"
+                  matTooltip="Country-level risk shading">
+            <mat-icon>map</mat-icon>
+            Country View
+          </button>
+          <button mat-stroked-button 
+                  [color]="mapViewMode === 'scatter' ? 'primary' : undefined"
+                  (click)="setMapView('scatter')"
+                  matTooltip="Individual data points">
+            <mat-icon>scatter_plot</mat-icon>
+            Points View
+          </button>
+        </div>
+        <div id="global-heatmap" class="heatmap-container"></div>
+        <div class="heatmap-legend">
+          <span class="legend-label">Low Risk</span>
+          <div class="legend-gradient"></div>
+          <span class="legend-label">Critical</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Data Status & Collection Card -->
+    <mat-card class="data-status-card" *ngIf="dataStatus">
+      <mat-card-header>
+        <mat-card-title>📊 Prediction System Status</mat-card-title>
+        <mat-card-subtitle>{{ dataStatus.model?.name }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="data-status-grid">
+          <div class="status-item">
+            <span class="status-label">Prediction Date</span>
+            <span class="status-value">{{ dataStatus.predictions?.last_prediction_date }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Countries Monitored</span>
+            <span class="status-value">{{ dataStatus.predictions?.countries_monitored | number }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Forecast Horizons</span>
+            <span class="status-value">{{ dataStatus.predictions?.horizons_available?.join(', ') }} days</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Status</span>
+            <span class="status-value" [class.success]="dataStatus.predictions?.status === 'current'"
+                  [class.warning]="dataStatus.predictions?.status === 'recent'"
+                  [class.danger]="dataStatus.predictions?.status === 'outdated'">
+              {{ dataStatus.predictions?.status | titlecase }}
+            </span>
+          </div>
+        </div>
+        <div class="model-info">
+          <span class="model-detail">Model Accuracy: {{ (dataStatus.model?.accuracy * 100) | number:'1.0-0' }}%</span>
+          <span class="model-detail">Features: {{ dataStatus.model?.features }}</span>
+        </div>
+        <div class="data-actions">
+          <button mat-raised-button color="primary" 
+                  (click)="collectMissingData()" 
+                  [disabled]="isCollectingData">
+            <mat-icon>refresh</mat-icon>
+            {{ isCollectingData ? 'Checking...' : 'Check Predictions' }}
+          </button>
+          <span *ngIf="collectionMessage" class="collection-message">{{ collectionMessage }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- News Sections -->
+    <div class="news-section">
+      <!-- Positive News -->
+      <mat-card class="news-card positive-news">
+        <mat-card-header>
+          <mat-card-title>🌟 Top 10 Positive Global News</mat-card-title>
+          <mat-card-subtitle>Peace-building and cooperation stories</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngFor="let story of positiveNews.slice(0, 10); trackBy: trackByStoryId" class="news-item">
+            <div class="news-header">
+              <h4>{{ story.title }}</h4>
+              <div class="news-meta">
+                <span class="country">{{ story.country }}</span>
+                <span class="date">{{ story.date }}</span>
+                <span class="sentiment positive">+{{ (story.goldstein_scale || story.sentiment_score * 10) | number:'1.1-1' }}</span>
+              </div>
+            </div>
+            <p class="news-summary">{{ story.summary }}</p>
+            <div class="news-footer">
+              <a *ngIf="story.url" [href]="story.url" target="_blank" class="news-link">Read More</a>
+              <span class="source">{{ story.source }}</span>
+              <span class="category">{{ story.category }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Negative News -->
+      <mat-card class="news-card negative-news">
+        <mat-card-header>
+          <mat-card-title>⚠️ Top 10 Global Conflict News</mat-card-title>
+          <mat-card-subtitle>Critical situations requiring attention</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngFor="let story of negativeNews.slice(0, 10); trackBy: trackByStoryId" class="news-item">
+            <div class="news-header">
+              <h4>{{ story.title }}</h4>
+              <div class="news-meta">
+                <span class="country">{{ story.country }}</span>
+                <span class="date">{{ story.date }}</span>
+                <span class="sentiment negative">{{ (story.goldstein_scale || story.sentiment_score * 10) | number:'1.1-1' }}</span>
+              </div>
+            </div>
+            <p class="news-summary">{{ story.summary }}</p>
+            <div class="news-footer">
+              <a *ngIf="story.url" [href]="story.url" target="_blank" class="news-link">Read More</a>
+              <span class="source">{{ story.source }}</span>
+              <span class="category">{{ story.category }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Model Performance Card - Redesigned -->
+    <mat-card *ngIf="performance" class="performance-card-new">
+      <mat-card-header>
+        <mat-card-title>🎯 Model Performance</mat-card-title>
+        <mat-card-subtitle>{{ performance.best_model }} • {{ performance.test_period }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="performance-metrics-grid">
+          <div class="metric-tile primary">
+            <div class="metric-value">{{ (performance.best_model_metrics.roc_auc * 100) | number:'1.1-1' }}%</div>
+            <div class="metric-name">ROC-AUC</div>
+            <div class="metric-desc">Discrimination ability</div>
+          </div>
+          <div class="metric-tile secondary">
+            <div class="metric-value">{{ (performance.best_model_metrics.f1_score * 100) | number:'1.1-1' }}%</div>
+            <div class="metric-name">F1 Score</div>
+            <div class="metric-desc">Balance of precision & recall</div>
+          </div>
+          <div class="metric-tile">
+            <div class="metric-value">{{ (performance.best_model_metrics.precision * 100) | number:'1.1-1' }}%</div>
+            <div class="metric-name">Precision</div>
+            <div class="metric-desc">True positive rate</div>
+          </div>
+          <div class="metric-tile">
+            <div class="metric-value">{{ (performance.best_model_metrics.recall * 100) | number:'1.1-1' }}%</div>
+            <div class="metric-name">Recall</div>
+            <div class="metric-desc">Detection rate</div>
+          </div>
+          <div class="metric-tile">
+            <div class="metric-value">{{ (performance.best_model_metrics.accuracy * 100) | number:'1.1-1' }}%</div>
+            <div class="metric-name">Accuracy</div>
+            <div class="metric-desc">Overall correctness</div>
+          </div>
+        </div>
+        <div *ngIf="performance.target_met" class="target-badge-new">
+          <mat-icon>verified</mat-icon>
+          <span>Performance targets achieved</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Forecast Horizon Selector -->
+    <mat-card class="horizon-card">
+      <mat-card-header>
+        <mat-card-title>Forecast Horizon</mat-card-title>
+        <mat-card-subtitle>Select prediction timeframe: {{ selectedHorizon }} days ahead</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-tab-group [(selectedIndex)]="selectedHorizonIndex" (selectedIndexChange)="onHorizonChange($event)">
+          <mat-tab *ngFor="let horizon of availableHorizons" [label]="horizon + ' Days'">
+            <div class="horizon-info">
+              <p>Predictions for conflicts {{ horizon }} days from now</p>
+              <p class="target-date">Target Date: {{ getTargetDateDisplay(horizon) }}</p>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Filters Card -->
+    <mat-card class="filters-card">
+      <mat-card-header>
+        <mat-card-title>Filters</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="filters-grid">
+          <!-- Risk Level Filter -->
+          <mat-form-field>
+            <mat-label>Risk Levels</mat-label>
+            <mat-select [(ngModel)]="selectedRiskLevels" multiple (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let level of riskLevels" [value]="level">
+                {{ level }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Country Filter -->
+          <mat-form-field>
+            <mat-label>Countries</mat-label>
+            <mat-select [(ngModel)]="selectedCountries" multiple (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let country of allCountries" [value]="country">
+                {{ country }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Probability Threshold -->
+          <div class="slider-container">
+            <label>Min Probability: {{ minProbability }}%</label>
+            <mat-slider
+              min="0"
+              max="100"
+              step="5"
+              showTickMarks
+              discrete
+              [(ngModel)]="minProbability"
+              (input)="applyFilters()">
+              <input matSliderThumb />
+            </mat-slider>
+          </div>
+
+          <!-- Clear Button -->
+          <button mat-raised-button color="accent" (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+
+        <div class="filter-summary">
+          Showing {{ filteredPredictions.length }} of {{ predictions.length }} countries
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Analytics Section -->
+    <div class="analytics-section">
+      <h2 class="section-title">
+        <mat-icon>analytics</mat-icon>
+        Risk Analytics
+      </h2>
+      
+      <div class="analytics-grid">
+        <!-- Risk Distribution Donut -->
+        <mat-card class="analytics-card">
+          <mat-card-header>
+            <mat-card-title>Risk Distribution</mat-card-title>
+            <mat-card-subtitle>Countries by risk category</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div id="risk-donut" class="chart-container"></div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Top 10 Highest Risk -->
+        <mat-card class="analytics-card wide">
+          <mat-card-header>
+            <mat-card-title>Highest Risk Countries</mat-card-title>
+            <mat-card-subtitle>Top 10 by conflict probability</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div id="top-risk-bar" class="chart-container"></div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Regional Breakdown -->
+        <mat-card class="analytics-card">
+          <mat-card-header>
+            <mat-card-title>Regional Overview</mat-card-title>
+            <mat-card-subtitle>Average risk by region</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div id="regional-bar" class="chart-container"></div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Predictions Table -->
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>Predictions ({{ filteredPredictions.length }} countries)</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredPredictions" class="predictions-table">
+
+            <!-- Country Column -->
+            <ng-container matColumnDef="country">
+              <th mat-header-cell *matHeaderCellDef>Country</th>
+              <td mat-cell *matCellDef="let pred">
+                <a [routerLink]="['/country', pred.country]" class="country-link">
+                  {{ pred.country }}
+                </a>
+              </td>
+            </ng-container>
+
+            <!-- Target Date Column -->
+            <ng-container matColumnDef="target_date">
+              <th mat-header-cell *matHeaderCellDef>Target Date</th>
+              <td mat-cell *matCellDef="let pred">
+                {{ pred.target_date }}
+              </td>
+            </ng-container>
+
+            <!-- Probability Column -->
+            <ng-container matColumnDef="probability">
+              <th mat-header-cell *matHeaderCellDef>Conflict Probability</th>
+              <td mat-cell *matCellDef="let pred">
+                <div class="probability-cell">
+                  <div class="probability-bar"
+                       [style.width.%]="pred.conflict_probability * 100"
+                       [style.background-color]="getRiskLevelColor(pred.risk_level)">
+                  </div>
+                  <span class="probability-text">{{ formatProbability(pred.conflict_probability) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Risk Level Column -->
+            <ng-container matColumnDef="risk_level">
+              <th mat-header-cell *matHeaderCellDef>Risk Level</th>
+              <td mat-cell *matCellDef="let pred">
+                <mat-chip [style.background-color]="getRiskLevelColor(pred.risk_level)">
+                  {{ pred.risk_level }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Confidence Column -->
+            <ng-container matColumnDef="confidence">
+              <th mat-header-cell *matHeaderCellDef>Confidence</th>
+              <td mat-cell *matCellDef="let pred">
+                {{ formatConfidence(pred.confidence) }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

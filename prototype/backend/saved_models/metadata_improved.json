@@ -1,0 +1,63 @@
+{
+  "timestamp": "20251215_140405",
+  "model_type": "XGBoost",
+  "n_features": 67,
+  "train_samples": 271912,
+  "test_samples": 14177,
+  "metrics": {
+    "roc_auc": 0.9999991493961138,
+    "f1_score": 0.9994850669412977,
+    "precision": 0.9992277992277993,
+    "recall": 0.9997424671645635
+  },
+  "feature_importance_top10": [
+    {
+      "feature": "IsHighConflict_mean",
+      "importance": 0.721315860748291
+    },
+    {
+      "feature": "ConflictRatio",
+      "importance": 0.07393418252468109
+    },
+    {
+      "feature": "GoldsteinScale_mean",
+      "importance": 0.05861667916178703
+    },
+    {
+      "feature": "IntensityScore_mean",
+      "importance": 0.04349775239825249
+    },
+    {
+      "feature": "IsQuad1_VerbalCoop_mean",
+      "importance": 0.025725843384861946
+    },
+    {
+      "feature": "HighConflict_vs_baseline",
+      "importance": 0.025258706882596016
+    },
+    {
+      "feature": "HighConflict_trend",
+      "importance": 0.007859664969146252
+    },
+    {
+      "feature": "GoldsteinScale_std",
+      "importance": 0.006646677386015654
+    },
+    {
+      "feature": "IsCooperation_mean",
+      "importance": 0.0039976174011826515
+    },
+    {
+      "feature": "VerbalConflictRatio",
+      "importance": 0.003390535479411483
+    }
+  ],
+  "target_definition": "IsHighConflict_mean > 0.15",
+  "improvements": [
+    "Removed absolute count features (sum)",
+    "Added country-normalized features",
+    "Added conflict intensity ratios",
+    "Added rolling averages and trends",
+    "New target: >20% high conflict events"
+  ]
+}
