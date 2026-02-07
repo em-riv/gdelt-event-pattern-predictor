@@ -42,6 +42,12 @@ env/
 # Notebook checkpoints (but keep .ipynb files)
 .ipynb_checkpoints/
 
+# Large notebook files (too large for GitHub - keep locally)
+notebooks/02_feature_engineering.ipynb
+notebooks/03_baseline_models.ipynb
+notebooks/04_advanced_models.ipynb
+notebooks/05_final_optimization.ipynb
+
 # Databases
 *.db
 *.sqlite
