@@ -1,6 +1,6 @@
 # GDELT Conflict Predictor - Prototype
 
-**Next-day conflict prediction using 98M+ GDELT events and advanced ML models**
+**Next-day conflict prediction using 135M GDELT events and advanced ML models**
 
 ---
 

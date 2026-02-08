@@ -338,7 +338,7 @@ class Database:
 ### Data Aggregation Pipeline
 
 **Overview:**
-Transform 98M+ raw GDELT events into ML-ready country-day features.
+Transform 135M raw GDELT events into ML-ready country-day features.
 
 **Stage 1: Raw Event Ingestion**
 
@@ -368,7 +368,7 @@ raw_event = {
 ```python
 def aggregate_events_to_country_day(events_df):
     """
-    Aggregate 98M events  220K country-day records
+    Aggregate 135M events  220K country-day records
     """
     # Group by country and date
     aggregated = events_df.groupby(['Country', 'Date']).agg({
