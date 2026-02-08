@@ -4,7 +4,7 @@ ML system that predicts next-day GDELT event patterns across 229 countries using
 
 ## What This Project Does
 
-Processes 98M+ events from GDELT (Global Database of Events, Language and Tone) and predicts tomorrow's event intensity for each country. Backend serves predictions via REST API. Frontend displays trends on a dashboard.
+Processes 135M+ events from GDELT (Global Database of Events, Language and Tone) and predicts tomorrow's event intensity for each country. Backend serves predictions via REST API. Frontend displays trends on a dashboard.
 
 **Important:** This predicts what gets reported in news, not what actually happens. GDELT is media coverage with all its biases. I discovered this the hard way when validating against real conflict data (ACLED) - the gap was huge.
 
