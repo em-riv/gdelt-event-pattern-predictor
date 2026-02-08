@@ -1,0 +1,68 @@
+# Generated Report Visualizations
+reports/visual_eda/*.html
+reports/visual_eda/*.png
+
+# Data files (generated/cached)
+data/**/*.parquet
+*.parquet
+data/**/*.csv
+*.csv
+temp_*.csv
+temp_*.parquet
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Model artifacts
+saved_models/
+trained_models/
+*.pth
+*.pkl
+*.joblib
+
+# Logs & temp files
+*.log
+process_log.txt
+gdelt_api.log
+gru_training*.log
+*.txt.bak
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Frontend build artifacts
+node_modules/
+.angular/
+dist/
+*.js.map
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment files
+.env
+.env.local
