@@ -1,6 +1,6 @@
 ﻿# GDELT Event Pattern Predictor
 
-ML system that predicts next-day GDELT event patterns across 229 countries using deep learning. Built to learn full-stack ML deployment: data pipeline, model training, REST API, and web frontend.
+ML system that predicts next-day GDELT event patterns across 200+ countries using deep learning. Built to learn full-stack ML deployment: data pipeline, model training, REST API, and web frontend.
 
 ## What This Project Does
 
@@ -85,7 +85,7 @@ Angular Frontend (dashboard visualization)
 
 ### Events -> Country-Day Aggregation
 
-1. Parse 98M GDELT events spanning 2015-2024
+1. Parse 135M GDELT events spanning 2015-2024
 2. Aggregate by country and date:
    - Event counts and article volume
    - Goldstein scale statistics (conflict intensity)
